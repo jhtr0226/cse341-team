@@ -7,10 +7,9 @@ const port = 8080;
 
 // MongoDB Connection
 mongoose
-  .connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGODB_URL)
   .then(() => console.log('MongoDB Connected'))
   .catch((err) => console.error('MongoDB connection error:', err));
-
 
 const DataSchema = new mongoose.Schema({
   id: Number,
@@ -22,7 +21,6 @@ const DataSchema = new mongoose.Schema({
 
 const DataModel = mongoose.model('Data', DataSchema);
 
-
 app.get('/api/data', async (req, res) => {
   try {
     const data = await DataModel.find();
@@ -32,7 +30,6 @@ app.get('/api/data', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
-
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
