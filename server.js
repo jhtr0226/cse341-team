@@ -1,36 +1,21 @@
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
+const connectDB = require('./database/connect');
+const dataRoutes = require('./routes/dataRoutes');
 
 const app = express();
 const port = 8080;
 
+// Middleware
+app.use(express.json());
+
 // MongoDB Connection
-mongoose
-  .connect(process.env.MONGODB_URL)
-  .then(() => console.log('MongoDB Connected'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+connectDB();
 
-const DataSchema = new mongoose.Schema({
-  id: Number,
-  title: String,
-  description: String,
-  image: String,
-  link: String,
-});
+// Routes
+app.use('/api', dataRoutes);
 
-const DataModel = mongoose.model('Data', DataSchema);
-
-app.get('/api/data', async (req, res) => {
-  try {
-    const data = await DataModel.find();
-    res.json(data);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
+// Start the Server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
